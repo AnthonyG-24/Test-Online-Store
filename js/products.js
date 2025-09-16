@@ -118,6 +118,15 @@ async function getCollections() {
   // Call Shopify and get the data
   const data = await callShopifyAPI(query); // Send query to Shopify
 
+  // Debug: log what we actually got back
+  console.log('Raw data from Shopify:', data);
+
+  // Check if data has the expected structure
+  if (!data || !data.collections) {
+    console.error('Unexpected data structure:', data);
+    throw new Error('Invalid response from Shopify API');
+  }
+
   // Return just the collections
   return data.collections.edges; // Give back the list of collections
 } // End of function

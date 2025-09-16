@@ -18,6 +18,22 @@ exports.handler = async (event, context) => {
     const SHOPIFY_STORE = process.env.SHOPIFY_STORE; // Your store name
     const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN; // Your private access token
 
+    // Debug logging
+    console.log('SHOPIFY_STORE:', SHOPIFY_STORE);
+    console.log('SHOPIFY_ACCESS_TOKEN exists:', !!SHOPIFY_ACCESS_TOKEN);
+
+    // Check if environment variables are missing
+    if (!SHOPIFY_STORE || !SHOPIFY_ACCESS_TOKEN) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: 'Missing environment variables',
+          store: SHOPIFY_STORE,
+          hasToken: !!SHOPIFY_ACCESS_TOKEN
+        }),
+      };
+    }
+
     // Make request to Shopify
     const response = await fetch(
       `https://${SHOPIFY_STORE}.myshopify.com/admin/api/2023-10/graphql.json`,
@@ -33,6 +49,22 @@ exports.handler = async (event, context) => {
 
     // Get the data from Shopify
     const data = await response.json();
+
+    // Debug logging
+    console.log('Shopify response status:', response.status);
+    console.log('Shopify response data:', JSON.stringify(data, null, 2));
+
+    // Check if the response was successful
+    if (!response.ok) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: 'Shopify API error',
+          status: response.status,
+          data: data
+        }),
+      };
+    }
 
     // Send it back to your website
     return {
