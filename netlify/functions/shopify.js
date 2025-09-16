@@ -29,9 +29,22 @@ exports.handler = async (event, context) => {
     // Get the query from the request
     const { query } = JSON.parse(event.body);
 
-    // Hardcode credentials for testing
-    const SHOPIFY_STORE = "FakeBrandBobBurgers";
-    const SHOPIFY_ACCESS_TOKEN = "YOUR_STOREFRONT_TOKEN_HERE"; // Replace with your Storefront API token
+    // Get credentials from environment variables
+    const SHOPIFY_STORE = process.env.SHOPIFY_STORE;
+    const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN;
+
+    // Check if environment variables are missing
+    if (!SHOPIFY_STORE || !SHOPIFY_ACCESS_TOKEN) {
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({
+          error: 'Missing environment variables',
+          store: SHOPIFY_STORE,
+          hasToken: !!SHOPIFY_ACCESS_TOKEN
+        })
+      };
+    }
 
     // Make request to Shopify Storefront API
     const response = await fetch(
