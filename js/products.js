@@ -26,16 +26,15 @@ async function callShopifyAPI(query) {
     });
 
     // Get the response as JSON
-    const data = await response.json(); // Turn function response into usable data
+    const data = await response.json();
 
     // Check if there were errors
     if (data.errors) {
-      // If Shopify sent back errors
-      throw new Error(data.errors[0].message); // Stop and show error
+      throw new Error(data.errors[0].message);
     }
 
     // Return the data
-    return data.data; // Give back the good data
+    return data.data;
   } catch (error) {
     // If anything went wrong
     console.error("Shopify API error:", error); // Log error to console
@@ -49,221 +48,77 @@ async function callShopifyAPI(query) {
 // This gets all collections from your Shopify store
 async function getCollections() {
   // Start function to get collections
-  // GraphQL query to get collections with their products
-  const query = ` // This is the request we send to Shopify
+  // Simple GraphQL query to just get collections
+  const query = `
         {
-            collections(first: 10) { // Get first 10 collections
-                edges { // Shopify wraps data in "edges"
-                    node { // Each "node" is one collection
-                        id // Collection ID
-                        title // Collection name
-                        handle // URL-friendly name
-                        description // Collection description
-                        image { // Collection image info
-                            url // Image web address
-                            altText // Description for screen readers
-                        }
-                        products(first: 20) { // Get first 20 products in this collection
-                            edges { // Products also wrapped in edges
-                                node { // Each product
-                                    id // Product ID
-                                    title // Product name
-                                    handle // URL-friendly product name
-                                    description // Product description
-                                    totalInventory // How many in stock
-                                    priceRange { // Price info
-                                        minVariantPrice { // Lowest price
-                                            amount // Price number
-                                            currencyCode // Currency (USD, CAD, etc)
-                                        }
-                                        maxVariantPrice { // Highest price
-                                            amount // Price number
-                                            currencyCode // Currency
-                                        }
-                                    }
-                                    variants(first: 10) { // Product options (size, color, etc)
-                                        edges {
-                                            node {
-                                                id // Variant ID
-                                                title // Variant name (like "Small / Red")
-                                                price { // Variant price
-                                                    amount
-                                                    currencyCode
-                                                }
-                                                quantityAvailable // How many of this variant in stock
-                                                selectedOptions { // The options (size, color)
-                                                    name // Option name (Size)
-                                                    value // Option value (Small)
-                                                }
-                                            }
-                                        }
-                                    }
-                                    images(first: 5) { // Product images
-                                        edges {
-                                            node {
-                                                url // Image web address
-                                                altText // Image description
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+            collections(first: 10) {
+                edges {
+                    node {
+                        id
+                        title
+                        handle
+                        description
+                        image {
+                            url
+                            altText
                         }
                     }
                 }
             }
         }
-    `; // End of query
+    `;
 
   // Call Shopify and get the data
   const data = await callShopifyAPI(query); // Send query to Shopify
 
-  // Debug: log what we actually got back
-  console.log('Raw data from Shopify:', data);
-
-  // Check if data has the expected structure
-  if (!data || !data.collections) {
-    console.error('Unexpected data structure:', data);
-    throw new Error('Invalid response from Shopify API');
-  }
-
   // Return just the collections
-  return data.collections.edges; // Give back the list of collections
+  return data.collections.edges;
 } // End of function
 
 // ===================================================================
-// FUNCTION: DISPLAY COLLECTIONS WITH PRODUCTS ON PAGE
+// FUNCTION: DISPLAY COLLECTIONS ON PAGE (SIMPLE VERSION)
 // ===================================================================
-// This puts the collections and their products on the webpage
+// This just shows basic collection info
 function displayCollections(collections) {
-  // Start function to show collections
-  // Find the HTML element where we'll display everything
-  const container = document.getElementById("collections-container"); // Find the div where collections go
-  // Get the templates from the HTML
-  const collectionTemplate = document.getElementById("collection-template"); // Find collection template
-  const productTemplate = document.getElementById("product-template"); // Find product template
+  const container = document.getElementById("collections-container");
+  const template = document.getElementById("collection-template");
 
-  // Check if we have any collections to display
   if (collections.length === 0) {
-    // If no collections came back
-    // No collections found, show error message
-    container.innerHTML = '<p class="error">No collections found</p>'; // Show error message
-    return; // Exit the function early
+    container.innerHTML = '<p class="error">No collections found</p>';
+    return;
   }
 
-  // Create the main container
-  container.innerHTML = '<div class="collections-container"></div>'; // Make container to hold everything
-  const mainContainer = container.querySelector(".collections-container"); // Find the container we just made
+  container.innerHTML = '<div class="collections-grid"></div>';
+  const grid = container.querySelector('.collections-grid');
 
-  // Loop through each collection
-  collections.forEach((collectionEdge) => {
-    // Do this for each collection
-    // Extract the actual collection data
-    const collection = collectionEdge.node; // Get the actual collection data
+  collections.forEach(collectionEdge => {
+    const collection = collectionEdge.node;
+    const clone = template.content.cloneNode(true);
 
-    // Clone the collection template
-    const collectionClone = collectionTemplate.content.cloneNode(true); // Make a copy of collection template
+    // Fill in basic collection info
+    clone.querySelector('.collection-title').textContent = collection.title;
+    clone.querySelector('.collection-description').textContent =
+      collection.description || 'No description';
 
-    // Fill in the collection data
-    collectionClone.querySelector(".collection-title").textContent =
-      collection.title; // Put collection name
-    collectionClone.querySelector(".collection-description").textContent = // Put description
-      collection.description || "No description"; // Use description or default text
-
-    // Handle collection image
+    // Handle image
     if (collection.image) {
-      // If collection has an image
-      const img = collectionClone.querySelector(".collection-img"); // Find the image element
-      img.src = collection.image.url; // Set image source
-      img.alt = collection.image.altText || collection.title; // Set image description
-      img.classList.remove("hidden"); // Make image visible
+      const img = clone.querySelector('.collection-img');
+      img.src = collection.image.url;
+      img.alt = collection.image.altText || collection.title;
+      img.classList.remove('hidden');
     } else {
-      // If no image
-      collectionClone
-        .querySelector(".no-image-placeholder")
-        .classList.remove("hidden"); // Show "No Image" text
+      clone.querySelector('.no-image-placeholder').classList.remove('hidden');
     }
 
-    // Get the products grid for this collection
-    const productsGrid = collectionClone.querySelector(".products-grid"); // Find where products go
-
-    // Add products to this collection
-    if (collection.products.edges.length > 0) {
-      // If this collection has products
-      collection.products.edges.forEach((productEdge) => {
-        // Do this for each product
-        const product = productEdge.node; // Get the actual product data
-
-        // Clone the product template
-        const productClone = productTemplate.content.cloneNode(true); // Make copy of product template
-
-        // Fill in product data
-        productClone.querySelector(".product-title").textContent =
-          product.title; // Product name
-        productClone.querySelector(".product-description").textContent = // Product description
-          product.description || "No description"; // Use description or default
-
-        // Set product price
-        const priceElement = productClone.querySelector(".product-price"); // Find price area
-        if (
-          product.priceRange.minVariantPrice.amount ===
-          product.priceRange.maxVariantPrice.amount
-        ) {
-          // Same price for all variants
-          priceElement.textContent = `$${product.priceRange.minVariantPrice.amount} ${product.priceRange.minVariantPrice.currencyCode}`;
-        } else {
-          // Price range
-          priceElement.textContent = `$${product.priceRange.minVariantPrice.amount} - $${product.priceRange.maxVariantPrice.amount} ${product.priceRange.minVariantPrice.currencyCode}`;
-        }
-
-        // Set inventory info
-        const inventoryElement =
-          productClone.querySelector(".product-inventory"); // Find inventory area
-        inventoryElement.textContent = `Stock: ${
-          product.totalInventory || 0
-        } units`; // Show total stock
-
-        // Handle product image
-        if (product.images.edges.length > 0) {
-          // If product has images
-          const img = productClone.querySelector(".product-img"); // Find image element
-          img.src = product.images.edges[0].node.url; // Use first image
-          img.alt = product.images.edges[0].node.altText || product.title; // Set description
-          img.classList.remove("hidden"); // Make image visible
-        } else {
-          // If no images
-          productClone
-            .querySelector(".no-image-placeholder")
-            .classList.remove("hidden"); // Show "No Image"
-        }
-
-        // Add variants info
-        const variantsElement = productClone.querySelector(".product-variants"); // Find variants area
-        if (product.variants.edges.length > 0) {
-          // If product has variants
-          let variantsHTML = "<strong>Options:</strong><ul>"; // Start list
-          product.variants.edges.forEach((variantEdge) => {
-            // For each variant
-            const variant = variantEdge.node; // Get variant data
-            variantsHTML += `<li>${variant.title} - $${variant.price.amount} (${variant.quantityAvailable} available)</li>`;
-          });
-          variantsHTML += "</ul>"; // End list
-          variantsElement.innerHTML = variantsHTML; // Put variants on page
-        }
-
-        // Add this product to the products grid
-        productsGrid.appendChild(productClone); // Put product in this collection
-      });
-    } else {
-      // If no products in this collection
-      productsGrid.innerHTML =
-        '<p class="no-products">No products in this collection</p>'; // Show message
+    // Remove products grid since we're not showing products yet
+    const productsGrid = clone.querySelector('.products-grid');
+    if (productsGrid) {
+      productsGrid.remove();
     }
 
-    // Add this collection (with its products) to the main container
-    mainContainer.appendChild(collectionClone); // Put whole collection on page
-  }); // End of loop through collections
-} // End of function
+    grid.appendChild(clone);
+  });
+}
 
 // ===================================================================
 // FUNCTION: LOAD COLLECTIONS (CALLED BY BUTTON)

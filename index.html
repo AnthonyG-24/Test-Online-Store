@@ -36,8 +36,11 @@
             background-color: #005a87; /* Darker blue */
         }
 
-        .collections-container { /* Main container for all collections */
-            margin-top: 20px; /* Space from top */
+        .collections-grid { /* Layout for showing collections */
+            display: grid; /* Use grid layout */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Make columns that fit automatically */
+            gap: 20px; /* 20px space between items */
+            margin-top: 20px; /* 20px space from top */
         }
 
         .collection { /* Style each collection box */
@@ -45,7 +48,6 @@
             padding: 20px; /* Space inside the box */
             border-radius: 8px; /* Rounded corners */
             box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Soft shadow */
-            margin-bottom: 30px; /* Space between collections */
         }
 
         .collection h2 { /* Collection titles */
