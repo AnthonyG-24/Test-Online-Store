@@ -49,44 +49,39 @@ async function callShopifyAPI(query) {
 // ===================================================================
 // FUNCTION: GET COLLECTIONS FROM SHOPIFY
 // ===================================================================
-// This gets collections (using fake data for now)
+// This gets collections from your Shopify store
 async function getCollections() {
-  // Return fake data so you can see the display working
-  return [
+  // GraphQL query for Storefront API
+  const query = `
     {
-      node: {
-        id: "1",
-        title: "Summer Collection",
-        handle: "summer-collection",
-        description: "Cool stuff for hot weather",
-        image: {
-          url: "https://via.placeholder.com/400x200/ff6b6b/ffffff?text=Summer+Collection",
-          altText: "Summer Collection"
+      collections(first: 10) {
+        edges {
+          node {
+            id
+            title
+            handle
+            description
+            image {
+              url
+              altText
+            }
+          }
         }
-      }
-    },
-    {
-      node: {
-        id: "2",
-        title: "Winter Gear",
-        handle: "winter-gear",
-        description: "Warm clothes for cold days",
-        image: {
-          url: "https://via.placeholder.com/400x200/4ecdc4/ffffff?text=Winter+Gear",
-          altText: "Winter Gear"
-        }
-      }
-    },
-    {
-      node: {
-        id: "3",
-        title: "Accessories",
-        handle: "accessories",
-        description: "The little things that make a big difference",
-        image: null
       }
     }
-  ];
+  `;
+
+  // Call Shopify and get the data
+  const data = await callShopifyAPI(query);
+
+  // Safety check
+  if (!data || !data.collections) {
+    console.error('No collections data received:', JSON.stringify(data, null, 2));
+    return [];
+  }
+
+  // Return just the collections
+  return data.collections.edges;
 } // End of function
 
 // ===================================================================
