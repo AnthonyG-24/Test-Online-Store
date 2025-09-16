@@ -28,6 +28,10 @@ async function callShopifyAPI(query) {
     // Get the response as JSON
     const data = await response.json();
 
+    // Log everything for debugging
+    console.log('Response status:', response.status);
+    console.log('Response data:', JSON.stringify(data, null, 2));
+
     // Check if there were errors
     if (data.errors) {
       throw new Error(data.errors[0].message);
