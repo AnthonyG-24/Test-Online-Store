@@ -31,16 +31,16 @@ exports.handler = async (event, context) => {
 
     // Hardcode credentials for testing
     const SHOPIFY_STORE = "FakeBrandBobBurgers";
-    const SHOPIFY_ACCESS_TOKEN = "d88c86ef56d7060fe690b9f039c0cc75";
+    const SHOPIFY_ACCESS_TOKEN = "YOUR_STOREFRONT_TOKEN_HERE"; // Replace with your Storefront API token
 
-    // Make request to Shopify
+    // Make request to Shopify Storefront API
     const response = await fetch(
-      `https://${SHOPIFY_STORE}.myshopify.com/admin/api/2023-10/graphql.json`,
+      `https://${SHOPIFY_STORE}.myshopify.com/api/2023-10/graphql.json`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
+          "X-Shopify-Storefront-Access-Token": SHOPIFY_ACCESS_TOKEN,
         },
         body: JSON.stringify({ query }),
       }

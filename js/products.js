@@ -49,40 +49,44 @@ async function callShopifyAPI(query) {
 // ===================================================================
 // FUNCTION: GET COLLECTIONS FROM SHOPIFY
 // ===================================================================
-// This gets all collections from your Shopify store
+// This gets collections (using fake data for now)
 async function getCollections() {
-  // Start function to get collections
-  // Simple GraphQL query to just get collections
-  const query = `
-        {
-            collections(first: 10) {
-                edges {
-                    node {
-                        id
-                        title
-                        handle
-                        description
-                        image {
-                            url
-                            altText
-                        }
-                    }
-                }
-            }
+  // Return fake data so you can see the display working
+  return [
+    {
+      node: {
+        id: "1",
+        title: "Summer Collection",
+        handle: "summer-collection",
+        description: "Cool stuff for hot weather",
+        image: {
+          url: "https://via.placeholder.com/400x200/ff6b6b/ffffff?text=Summer+Collection",
+          altText: "Summer Collection"
         }
-    `;
-
-  // Call Shopify and get the data
-  const data = await callShopifyAPI(query); // Send query to Shopify
-
-  // Safety check
-  if (!data || !data.collections) {
-    console.error('No collections data received:', JSON.stringify(data, null, 2));
-    return [];
-  }
-
-  // Return just the collections
-  return data.collections.edges;
+      }
+    },
+    {
+      node: {
+        id: "2",
+        title: "Winter Gear",
+        handle: "winter-gear",
+        description: "Warm clothes for cold days",
+        image: {
+          url: "https://via.placeholder.com/400x200/4ecdc4/ffffff?text=Winter+Gear",
+          altText: "Winter Gear"
+        }
+      }
+    },
+    {
+      node: {
+        id: "3",
+        title: "Accessories",
+        handle: "accessories",
+        description: "The little things that make a big difference",
+        image: null
+      }
+    }
+  ];
 } // End of function
 
 // ===================================================================
