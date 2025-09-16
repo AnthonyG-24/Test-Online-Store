@@ -1,12 +1,27 @@
-// This function runs on Netlify's servers, not in the browser
-// It keeps your API key secret and talks to Shopify for you
-
 exports.handler = async (event, context) => {
+  // Add CORS headers for all responses
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS"
+  };
+
+  // Handle preflight requests
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers,
+      body: ""
+    };
+  }
+
   // Only allow POST requests
   if (event.httpMethod !== "POST") {
     return {
-      statusCode: 405, // Method not allowed
-      body: "Only POST requests allowed",
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: "Only POST requests allowed" })
     };
   }
 
@@ -14,25 +29,9 @@ exports.handler = async (event, context) => {
     // Get the query from the request
     const { query } = JSON.parse(event.body);
 
-    // Your Shopify store info (from environment variables)
-    const SHOPIFY_STORE = process.env.SHOPIFY_STORE; // Your store name
-    const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN; // Your private access token
-
-    // Check if environment variables are missing
-    if (!SHOPIFY_STORE || !SHOPIFY_ACCESS_TOKEN) {
-      return {
-        statusCode: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify({
-          error: 'Missing environment variables',
-          store: SHOPIFY_STORE,
-          hasToken: !!SHOPIFY_ACCESS_TOKEN
-        }),
-      };
-    }
+    // Hardcode credentials for testing
+    const SHOPIFY_STORE = "FakeBrandBobBurgers";
+    const SHOPIFY_ACCESS_TOKEN = "d88c86ef56d7060fe690b9f039c0cc75";
 
     // Make request to Shopify
     const response = await fetch(
@@ -47,39 +46,20 @@ exports.handler = async (event, context) => {
       }
     );
 
-    // Get the data from Shopify
     const data = await response.json();
 
-    // Debug logging
-    console.log('Shopify response status:', response.status);
-    console.log('Shopify response data:', JSON.stringify(data, null, 2));
-
-    // Check if the response was successful
-    if (!response.ok) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: 'Shopify API error',
-          status: response.status,
-          data: data
-        }),
-      };
-    }
-
-    // Send it back to your website
+    // Return the data regardless of status for debugging
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*", // Allow your website to access this
-      },
-      body: JSON.stringify(data),
+      headers,
+      body: JSON.stringify(data)
     };
+
   } catch (error) {
-    // If something went wrong, send error back
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
+      headers,
+      body: JSON.stringify({ error: error.message })
     };
   }
 };
