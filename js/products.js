@@ -73,7 +73,7 @@ async function getCollections() {
 
   // Safety check
   if (!data || !data.collections) {
-    console.error('No collections data received:', data);
+    console.error('No collections data received:', JSON.stringify(data, null, 2));
     return [];
   }
 
