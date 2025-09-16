@@ -159,18 +159,12 @@
         </div> <!-- End of collections area -->
     </div> <!-- End of main content -->
 
-    <!-- Template for each collection -->
-    <template id="collection-template"> <!-- Hidden template that gets copied for each collection -->
-        <div class="collection"> <!-- Box for one collection -->
-            <h2 class="collection-title"></h2> <!-- Collection name goes here -->
-            <div class="collection-image"> <!-- Area for collection image -->
-                <img class="collection-img hidden" src="" alt=""> <!-- Image (hidden at start) -->
-                <div class="no-image-placeholder hidden">No Image</div> <!-- Backup text if no image -->
-            </div> <!-- End of image area -->
-            <p class="collection-description"></p> <!-- Collection description -->
-            <div class="products-grid"></div> <!-- Area where products in this collection will go -->
-        </div> <!-- End of collection box -->
-    </template> <!-- End of collection template -->
+    <!-- Simple template for collections -->
+    <template id="collection-template">
+        <div class="collection">
+            <h2 class="collection-title"></h2>
+        </div>
+    </template>
 
     <!-- Template for each product -->
     <template id="product-template"> <!-- Hidden template that gets copied for each product -->

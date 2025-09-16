@@ -1,7 +1,10 @@
 // ===================================================================
-// PRODUCTS.JS - ONLY GETS COLLECTIONS AND DISPLAYS THEM
+// PRODUCTS.JS - GETS COLLECTIONS AND SHOWS PRODUCTS ON CLICK
 // ===================================================================
-// This file does one simple thing: gets collections from Shopify and shows them
+// This file gets collections and lets you click to see products
+
+// Global variable to store all collections data
+let allCollections = [];
 
 // ===================================================================
 // FUNCTION: CALL SHOPIFY API VIA NETLIFY FUNCTION
@@ -51,7 +54,7 @@ async function callShopifyAPI(query) {
 // ===================================================================
 // This gets collections from your Shopify store
 async function getCollections() {
-  // GraphQL query for Storefront API
+  // GraphQL query for Storefront API - get collections with their products
   const query = `
     {
       collections(first: 10) {
@@ -64,6 +67,47 @@ async function getCollections() {
             image {
               url
               altText
+            }
+            products(first: 20) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                  description
+                  priceRange {
+                    minVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                    maxVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                  }
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                        altText
+                      }
+                    }
+                  }
+                  variants(first: 5) {
+                    edges {
+                      node {
+                        id
+                        title
+                        price {
+                          amount
+                          currencyCode
+                        }
+                        quantityAvailable
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -85,46 +129,45 @@ async function getCollections() {
 } // End of function
 
 // ===================================================================
-// FUNCTION: DISPLAY COLLECTIONS ON PAGE (SIMPLE VERSION)
+// FUNCTION: DISPLAY COLLECTIONS ON PAGE
 // ===================================================================
-// This just shows basic collection info
+// Shows collection names that you can click to see products
 function displayCollections(collections) {
+  // Find where to put collections on the page
   const container = document.getElementById("collections-container");
   const template = document.getElementById("collection-template");
 
+  // Check if we got any collections
   if (collections.length === 0) {
-    container.innerHTML = '<p class="error">No collections found</p>';
-    return;
+    container.innerHTML = '<p class="error">No collections found</p>'; // Show error message
+    return; // Stop here
   }
 
+  // Store collections data globally so we can use it when clicked
+  allCollections = collections;
+
+  // Create the grid to hold collection names
   container.innerHTML = '<div class="collections-grid"></div>';
   const grid = container.querySelector('.collections-grid');
 
-  collections.forEach(collectionEdge => {
-    const collection = collectionEdge.node;
-    const clone = template.content.cloneNode(true);
+  // Loop through each collection and create clickable names
+  collections.forEach((collectionEdge, index) => {
+    const collection = collectionEdge.node; // Get collection data
+    const clone = template.content.cloneNode(true); // Copy the template
 
-    // Fill in basic collection info
-    clone.querySelector('.collection-title').textContent = collection.title;
-    clone.querySelector('.collection-description').textContent =
-      collection.description || 'No description';
+    // Fill in the collection name
+    const titleElement = clone.querySelector('.collection-title');
+    titleElement.textContent = collection.title; // Set the name
+    titleElement.style.cursor = 'pointer'; // Make it look clickable
+    titleElement.style.color = '#007cba'; // Make it blue like a link
+    titleElement.style.textDecoration = 'underline'; // Add underline
 
-    // Handle image
-    if (collection.image) {
-      const img = clone.querySelector('.collection-img');
-      img.src = collection.image.url;
-      img.alt = collection.image.altText || collection.title;
-      img.classList.remove('hidden');
-    } else {
-      clone.querySelector('.no-image-placeholder').classList.remove('hidden');
-    }
+    // Add click event to show products when clicked
+    titleElement.addEventListener('click', () => {
+      showProductsForCollection(index); // Call function to show products
+    });
 
-    // Remove products grid since we're not showing products yet
-    const productsGrid = clone.querySelector('.products-grid');
-    if (productsGrid) {
-      productsGrid.remove();
-    }
-
+    // Add the collection to the page
     grid.appendChild(clone);
   });
 }
