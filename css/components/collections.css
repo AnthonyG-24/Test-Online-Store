@@ -1,0 +1,42 @@
+/* Collection styles */
+.collection { /* Style each collection box */
+    background: white; /* White background */
+    padding: 20px; /* Space inside the box */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Soft shadow */
+}
+
+.collection h2 { /* Collection titles */
+    color: #333; /* Dark gray */
+    border-bottom: 2px solid #007cba; /* Blue line under title */
+    padding-bottom: 10px; /* Space below title */
+    margin-bottom: 15px; /* Space after title */
+}
+
+.clickable { /* Clickable collection names */
+    cursor: pointer; /* Show hand when hovering */
+    color: #007cba; /* Blue like a link */
+    text-decoration: underline; /* Add underline */
+    transition: color 0.2s; /* Smooth color change */
+}
+
+.clickable:hover { /* When hovering over collection name */
+    color: #005a87; /* Darker blue */
+}
+
+.collection img { /* Style collection images */
+    width: 100%; /* Take up full width */
+    height: 200px; /* Always 200px tall */
+    object-fit: cover; /* Crop image to fit nicely */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.no-image-placeholder { /* When there's no image to show */
+    background: #eee; /* Light gray background */
+    height: 200px; /* Same height as images */
+    display: flex; /* Use flex layout */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    color: #999; /* Gray text */
+    border-radius: 5px; /* Rounded corners */
+}

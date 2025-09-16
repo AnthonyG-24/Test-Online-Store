@@ -1,0 +1,32 @@
+/* Button styles */
+button { /* Style all buttons */
+    background-color: #007cba; /* Blue background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Space inside button */
+    border: none; /* No border line */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Show hand when hovering */
+    margin: 10px 0; /* Space above and below */
+}
+
+button:hover { /* When mouse hovers over button */
+    background-color: #005a87; /* Darker blue */
+}
+
+.back-button-container { /* Container for back button */
+    margin-bottom: 20px; /* Space below button */
+}
+
+.back-button { /* Style for back button */
+    background-color: #6c757d; /* Gray background */
+    color: white; /* White text */
+    padding: 8px 16px; /* Space inside button */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Show hand when hovering */
+    font-size: 14px; /* Smaller text */
+}
+
+.back-button:hover { /* When hovering over back button */
+    background-color: #5a6268; /* Darker gray */
+}

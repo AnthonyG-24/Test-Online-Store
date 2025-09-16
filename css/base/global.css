@@ -1,0 +1,35 @@
+/* Global styles - basic page setup */
+body {
+    font-family: Arial, sans-serif; /* Use Arial font */
+    margin: 0; /* No space around edges */
+    padding: 20px; /* Add 20px space inside */
+    background-color: #f5f5f5; /* Light gray background */
+}
+
+.container { /* Style for the main content area */
+    max-width: 1200px; /* Don't let it get wider than 1200px */
+    margin: 0 auto; /* Center it on the page */
+}
+
+h1 { /* Style the main title */
+    text-align: center; /* Put text in the middle */
+    color: #333; /* Dark gray color */
+}
+
+.hidden { /* Hide things with this class */
+    display: none; /* Don't show on page */
+}
+
+.loading { /* Style for loading message */
+    text-align: center; /* Center the text */
+    color: #666; /* Gray color */
+    padding: 40px; /* Space around text */
+}
+
+.error { /* Style for error messages */
+    background-color: #ffebee; /* Light red background */
+    color: #c62828; /* Dark red text */
+    padding: 15px; /* Space inside */
+    border-radius: 5px; /* Rounded corners */
+    margin: 10px 0; /* Space above and below */
+}

@@ -1,0 +1,51 @@
+/* Product styles */
+.product { /* Style each product box */
+    background: #f9f9f9; /* Light gray background */
+    padding: 15px; /* Space inside product box */
+    border-radius: 6px; /* Rounded corners */
+    border: 1px solid #e0e0e0; /* Light border */
+}
+
+.product h3 { /* Product titles */
+    color: #333; /* Dark gray */
+    margin-top: 10px; /* Space above title */
+    margin-bottom: 8px; /* Space below title */
+}
+
+.product-price { /* Product price styling */
+    font-size: 18px; /* Bigger text */
+    font-weight: bold; /* Bold text */
+    color: #007cba; /* Blue color */
+    margin: 8px 0; /* Space above and below */
+}
+
+.product-inventory { /* Stock info styling */
+    color: #666; /* Gray text */
+    font-size: 14px; /* Smaller text */
+    margin: 5px 0; /* Space above and below */
+}
+
+.product-variants ul { /* Product options list */
+    margin: 5px 0; /* Space around list */
+    padding-left: 20px; /* Indent list */
+}
+
+.product-variants li { /* Each option item */
+    font-size: 14px; /* Smaller text */
+    color: #555; /* Dark gray */
+    margin: 3px 0; /* Small space between items */
+}
+
+.product img { /* Product images specifically */
+    width: 100%; /* Take up full width */
+    height: 150px; /* Smaller than collection images */
+    object-fit: cover; /* Crop image to fit nicely */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.no-products { /* When collection has no products */
+    text-align: center; /* Center text */
+    color: #999; /* Gray color */
+    font-style: italic; /* Slanted text */
+    padding: 20px; /* Space around text */
+}
