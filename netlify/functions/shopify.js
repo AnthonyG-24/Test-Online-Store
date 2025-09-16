@@ -14,8 +14,8 @@ exports.handler = async (event, context) => {
     // Get the query from the request
     const { query } = JSON.parse(event.body);
 
-    // Your Shopify store info (these come from environment variables)
-    const SHOPIFY_STORE = process.env.SHOPIFY_STORE; // Your store name (like 'mystore')
+    // Your Shopify store info (from environment variables)
+    const SHOPIFY_STORE = process.env.SHOPIFY_STORE; // Your store name
     const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN; // Your private access token
 
     // Make request to Shopify
