@@ -18,14 +18,14 @@ exports.handler = async (event, context) => {
     const SHOPIFY_STORE = process.env.SHOPIFY_STORE; // Your store name
     const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN; // Your private access token
 
-    // Debug logging
-    console.log('SHOPIFY_STORE:', SHOPIFY_STORE);
-    console.log('SHOPIFY_ACCESS_TOKEN exists:', !!SHOPIFY_ACCESS_TOKEN);
-
     // Check if environment variables are missing
     if (!SHOPIFY_STORE || !SHOPIFY_ACCESS_TOKEN) {
       return {
         statusCode: 500,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
         body: JSON.stringify({
           error: 'Missing environment variables',
           store: SHOPIFY_STORE,

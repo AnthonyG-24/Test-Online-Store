@@ -71,6 +71,12 @@ async function getCollections() {
   // Call Shopify and get the data
   const data = await callShopifyAPI(query); // Send query to Shopify
 
+  // Safety check
+  if (!data || !data.collections) {
+    console.error('No collections data received:', data);
+    return [];
+  }
+
   // Return just the collections
   return data.collections.edges;
 } // End of function
