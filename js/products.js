@@ -158,9 +158,7 @@ function displayCollections(collections) {
     // Fill in the collection name
     const titleElement = clone.querySelector('.collection-title');
     titleElement.textContent = collection.title; // Set the name
-    titleElement.style.cursor = 'pointer'; // Make it look clickable
-    titleElement.style.color = '#007cba'; // Make it blue like a link
-    titleElement.style.textDecoration = 'underline'; // Add underline
+    titleElement.classList.add('clickable'); // Add CSS class for styling
 
     // Add click event to show products when clicked
     titleElement.addEventListener('click', () => {

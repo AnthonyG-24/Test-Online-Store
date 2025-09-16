@@ -57,6 +57,17 @@
             margin-bottom: 15px; /* Space after title */
         }
 
+        .clickable { /* Clickable collection names */
+            cursor: pointer; /* Show hand when hovering */
+            color: #007cba; /* Blue like a link */
+            text-decoration: underline; /* Add underline */
+            transition: color 0.2s; /* Smooth color change */
+        }
+
+        .clickable:hover { /* When hovering over collection name */
+            color: #005a87; /* Darker blue */
+        }
+
         .products-grid { /* Layout for products within each collection */
             display: grid; /* Use grid layout */
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Product columns */
