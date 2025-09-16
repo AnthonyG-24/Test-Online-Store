@@ -1,0 +1,191 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Store</title> 
+    <style> 
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #f5f5f5; 
+        }
+
+        .container { /* Style for the main content area */
+            max-width: 1200px; /* Don't let it get wider than 1200px */
+            margin: 0 auto; /* Center it on the page */
+        }
+
+        h1 { /* Style the main title */
+            text-align: center; /* Put text in the middle */
+            color: #333; /* Dark gray color */
+        }
+
+        button { /* Style all buttons */
+            background-color: #007cba; /* Blue background */
+            color: white; /* White text */
+            padding: 10px 20px; /* Space inside button */
+            border: none; /* No border line */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Show hand when hovering */
+            margin: 10px 0; /* Space above and below */
+        }
+
+        button:hover { /* When mouse hovers over button */
+            background-color: #005a87; /* Darker blue */
+        }
+
+        .collections-container { /* Main container for all collections */
+            margin-top: 20px; /* Space from top */
+        }
+
+        .collection { /* Style each collection box */
+            background: white; /* White background */
+            padding: 20px; /* Space inside the box */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Soft shadow */
+            margin-bottom: 30px; /* Space between collections */
+        }
+
+        .collection h2 { /* Collection titles */
+            color: #333; /* Dark gray */
+            border-bottom: 2px solid #007cba; /* Blue line under title */
+            padding-bottom: 10px; /* Space below title */
+            margin-bottom: 15px; /* Space after title */
+        }
+
+        .products-grid { /* Layout for products within each collection */
+            display: grid; /* Use grid layout */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Product columns */
+            gap: 15px; /* Space between products */
+            margin-top: 15px; /* Space from collection info */
+        }
+
+        .product { /* Style each product box */
+            background: #f9f9f9; /* Light gray background */
+            padding: 15px; /* Space inside product box */
+            border-radius: 6px; /* Rounded corners */
+            border: 1px solid #e0e0e0; /* Light border */
+        }
+
+        .product h3 { /* Product titles */
+            color: #333; /* Dark gray */
+            margin-top: 10px; /* Space above title */
+            margin-bottom: 8px; /* Space below title */
+        }
+
+        .product-price { /* Product price styling */
+            font-size: 18px; /* Bigger text */
+            font-weight: bold; /* Bold text */
+            color: #007cba; /* Blue color */
+            margin: 8px 0; /* Space above and below */
+        }
+
+        .product-inventory { /* Stock info styling */
+            color: #666; /* Gray text */
+            font-size: 14px; /* Smaller text */
+            margin: 5px 0; /* Space above and below */
+        }
+
+        .product-variants ul { /* Product options list */
+            margin: 5px 0; /* Space around list */
+            padding-left: 20px; /* Indent list */
+        }
+
+        .product-variants li { /* Each option item */
+            font-size: 14px; /* Smaller text */
+            color: #555; /* Dark gray */
+            margin: 3px 0; /* Small space between items */
+        }
+
+        .no-products { /* When collection has no products */
+            text-align: center; /* Center text */
+            color: #999; /* Gray color */
+            font-style: italic; /* Slanted text */
+            padding: 20px; /* Space around text */
+        }
+
+        .collection img, .product img { /* Style all images */
+            width: 100%; /* Take up full width */
+            height: 200px; /* Always 200px tall */
+            object-fit: cover; /* Crop image to fit nicely */
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        .product img { /* Product images specifically */
+            height: 150px; /* Smaller than collection images */
+        }
+
+        .loading { /* Style for loading message */
+            text-align: center; /* Center the text */
+            color: #666; /* Gray color */
+            padding: 40px; /* Space around text */
+        }
+
+        .error { /* Style for error messages */
+            background-color: #ffebee; /* Light red background */
+            color: #c62828; /* Dark red text */
+            padding: 15px; /* Space inside */
+            border-radius: 5px; /* Rounded corners */
+            margin: 10px 0; /* Space above and below */
+        }
+
+        .hidden { /* Hide things with this class */
+            display: none; /* Don't show on page */
+        }
+
+        .no-image-placeholder { /* When there's no image to show */
+            background: #eee; /* Light gray background */
+            height: 200px; /* Same height as images */
+            display: flex; /* Use flex layout */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+            color: #999; /* Gray text */
+            border-radius: 5px; /* Rounded corners */
+        }
+    </style> 
+</head> 
+<body> 
+    <div class="container"> 
+        <h1>My Simple Store</h1> <!-- Big title at top -->
+
+        <button onclick="loadCollections()">Load Collections</button> <!-- Button that runs loadCollections function when clicked -->
+
+        <div id="collections-container"> <!-- Area where collections will appear -->
+            <p class="loading">Click "Load Collections" to see what's available</p> <!-- Initial message -->
+        </div> <!-- End of collections area -->
+    </div> <!-- End of main content -->
+
+    <!-- Template for each collection -->
+    <template id="collection-template"> <!-- Hidden template that gets copied for each collection -->
+        <div class="collection"> <!-- Box for one collection -->
+            <h2 class="collection-title"></h2> <!-- Collection name goes here -->
+            <div class="collection-image"> <!-- Area for collection image -->
+                <img class="collection-img hidden" src="" alt=""> <!-- Image (hidden at start) -->
+                <div class="no-image-placeholder hidden">No Image</div> <!-- Backup text if no image -->
+            </div> <!-- End of image area -->
+            <p class="collection-description"></p> <!-- Collection description -->
+            <div class="products-grid"></div> <!-- Area where products in this collection will go -->
+        </div> <!-- End of collection box -->
+    </template> <!-- End of collection template -->
+
+    <!-- Template for each product -->
+    <template id="product-template"> <!-- Hidden template that gets copied for each product -->
+        <div class="product"> <!-- Box for one product -->
+            <div class="product-image"> <!-- Area for product image -->
+                <img class="product-img hidden" src="" alt=""> <!-- Product image (hidden at start) -->
+                <div class="no-image-placeholder hidden">No Image</div> <!-- Backup text if no image -->
+            </div> <!-- End of product image area -->
+            <h3 class="product-title"></h3> <!-- Product name goes here -->
+            <p class="product-price"></p> <!-- Product price goes here -->
+            <p class="product-description"></p> <!-- Product description -->
+            <div class="product-inventory"></div> <!-- Stock info goes here -->
+            <div class="product-variants"></div> <!-- Product options (size, color, etc) go here -->
+        </div> <!-- End of product box -->
+    </template> <!-- End of product template -->
+
+    <!-- Load the Shopify functionality -->
+    <script src="js/products.js"></script> <!-- Load our JavaScript file -->
+</body>
+</html>
