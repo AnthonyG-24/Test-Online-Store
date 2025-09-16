@@ -173,6 +173,99 @@ function displayCollections(collections) {
 }
 
 // ===================================================================
+// FUNCTION: SHOW PRODUCTS FOR A COLLECTION
+// ===================================================================
+// This shows all products when you click on a collection name
+function showProductsForCollection(collectionIndex) {
+  // Get the collection data
+  const collection = allCollections[collectionIndex].node;
+
+  // Find where to show products
+  const container = document.getElementById("collections-container");
+  const productTemplate = document.getElementById("product-template");
+
+  // Check if this collection has products
+  if (!collection.products.edges || collection.products.edges.length === 0) {
+    container.innerHTML = `
+      <div class="back-button-container">
+        <button onclick="goBackToCollections()" class="back-button">← Back to Collections</button>
+      </div>
+      <h2>Products in ${collection.title}</h2>
+      <p class="error">No products found in this collection</p>
+    `;
+    return; // Stop here
+  }
+
+  // Create the header with back button and collection name
+  container.innerHTML = `
+    <div class="back-button-container">
+      <button onclick="goBackToCollections()" class="back-button">← Back to Collections</button>
+    </div>
+    <h2>Products in ${collection.title}</h2>
+    <div class="products-grid"></div>
+  `;
+
+  // Find the products grid we just created
+  const grid = container.querySelector('.products-grid');
+
+  // Loop through each product and display it
+  collection.products.edges.forEach(productEdge => {
+    const product = productEdge.node; // Get product data
+    const clone = productTemplate.content.cloneNode(true); // Copy product template
+
+    // Fill in product information
+    clone.querySelector('.product-title').textContent = product.title; // Product name
+    clone.querySelector('.product-description').textContent =
+      product.description || 'No description'; // Product description
+
+    // Set product price
+    const priceElement = clone.querySelector('.product-price');
+    if (product.priceRange.minVariantPrice.amount === product.priceRange.maxVariantPrice.amount) {
+      // Same price for all variants
+      priceElement.textContent = `$${product.priceRange.minVariantPrice.amount} ${product.priceRange.minVariantPrice.currencyCode}`;
+    } else {
+      // Price range (different prices for different variants)
+      priceElement.textContent = `$${product.priceRange.minVariantPrice.amount} - $${product.priceRange.maxVariantPrice.amount} ${product.priceRange.minVariantPrice.currencyCode}`;
+    }
+
+    // Show product image if it exists
+    if (product.images.edges.length > 0) {
+      const img = clone.querySelector('.product-img'); // Find image element
+      img.src = product.images.edges[0].node.url; // Set image source
+      img.alt = product.images.edges[0].node.altText || product.title; // Set image description
+      img.classList.remove('hidden'); // Make image visible
+    } else {
+      // No image, show placeholder
+      clone.querySelector('.no-image-placeholder').classList.remove('hidden');
+    }
+
+    // Show product variants (sizes, colors, etc.)
+    const variantsElement = clone.querySelector('.product-variants');
+    if (product.variants.edges.length > 0) {
+      let variantsHTML = '<strong>Options:</strong><ul>'; // Start list
+      product.variants.edges.forEach(variantEdge => {
+        const variant = variantEdge.node; // Get variant data
+        variantsHTML += `<li>${variant.title} - $${variant.price.amount} (${variant.quantityAvailable} available)</li>`;
+      });
+      variantsHTML += '</ul>'; // End list
+      variantsElement.innerHTML = variantsHTML; // Put variants on page
+    }
+
+    // Add this product to the grid
+    grid.appendChild(clone);
+  });
+}
+
+// ===================================================================
+// FUNCTION: GO BACK TO COLLECTIONS
+// ===================================================================
+// This takes you back to the collections list
+function goBackToCollections() {
+  // Just redisplay the collections we already have
+  displayCollections(allCollections);
+}
+
+// ===================================================================
 // FUNCTION: LOAD COLLECTIONS (CALLED BY BUTTON)
 // ===================================================================
 // This is the main function that gets called when you click the button
